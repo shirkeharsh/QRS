@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aarohan 2K25 - Registration</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="scripts/index.js"></script>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <!-- Logo - Moved Further Up -->
+    <img src="logo.png" alt="Aarohan 2K25 Logo" class="logo"> 
+
+    <h2>Aarohan 2K25 Registration</h2>
+    
+    <div class="form-container">
+        <form name="studentForm" action="submit.php" method="POST" onsubmit="return validateForm()">
+            <label>Full Name:</label>
+            <input type="text" name="full_name" required>
+
+            <label>Select Your School:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="school" value="School of MCA" onclick="showYearOptions()"> School of MCA</label>
+                <label><input type="radio" name="school" value="School of Management" onclick="showYearOptions()" required> School of Management</label>
+            </div>
+        
+            <div id="yearOptions" style="display:none;">
+                <label>Select Year:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="year" value="1st Year" required> 1st Year</label>
+                    <label><input type="radio" name="year" value="2nd Year"> 2nd Year</label>
+                </div>
+            </div>
+
+            <label>Phone Number:</label>
+            <input type="text" name="phone" id="phone" maxlength="10" required oninput="filterNumbers(this)">
+            <span id="phone-error" style="color: red; font-weight: bold;"></span>
+
+            <button type="submit" id="submit-btn" disabled>Submit</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">© Made with ❤️ | All Rights Reserved</div>
+
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 60,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ff0080"
+                },
+                "shape": {
+                    "type": "circle"
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true
+                },
+                "size": {
+                    "value": 4,
+                    "random": true
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 120,
+                    "color": "#ff4d94",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1.5
+                }
+            }
+        });
+
+        // Check phone number via AJAX
+        document.getElementById("phone").addEventListener("input", function () {
+            let phone = this.value;
+            let errorSpan = document.getElementById("phone-error");
+            let submitBtn = document.getElementById("submit-btn");
+
+            if (phone.length === 10) {
+                fetch("check_phone.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: "phone=" + phone
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "exists") {
+                        errorSpan.innerHTML = data.message;
+                        submitBtn.disabled = true;
+                    } else {
+                        errorSpan.innerHTML = "";
+                        submitBtn.disabled = false;
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            } else {
+                errorSpan.innerHTML = "";
+                submitBtn.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>
